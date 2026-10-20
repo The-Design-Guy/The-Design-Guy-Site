@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Portfolio Viewer · Royi Berkovitz</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#d9d3cd}
+a{color:#101010}a:hover{color:#000}
+input[type=number]::-webkit-inner-spin-button{opacity:.4}
+</style>
+</helmet>
+
+<div ref="{{ stageRef }}" style="position:fixed;inset:0;background:{{ stageBg }};font-family:Outfit,sans-serif;color:#101010;overflow:hidden">
+
+  <div style="position:absolute;left:0;top:{{ stageTop }};right:{{ stageRight }};bottom:0;display:flex;align-items:{{ stageAlign }};justify-content:center">
+    <div style="position:relative;width:{{ outerW }};height:{{ outerH }};flex:0 0 auto;border-radius:{{ outerR }};box-shadow:{{ frameShadow }};outline:{{ fsOutline }}">
+      <div style="position:absolute;top:0;left:0;zoom:{{ zoom }};padding:{{ bezelPad }};background:{{ bezelBg }};border-radius:{{ bezelR }}">
+        <div style="width:{{ innerW }};height:{{ innerH }};border-radius:{{ innerR }};overflow:hidden;background:#101010">
+          <iframe key="{{ frameKey }}" src="{{ frameSrc }}" title="{{ pageName }}" style="width:{{ innerW }};height:{{ innerH }};border:0;display:block;background:#101010"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ref="{{ pillRef }}" style="position:absolute;top:14px;left:18px;z-index:5;display:{{ chromeDisp }};flex-wrap:wrap;align-items:center;gap:10px;max-width:{{ pillMax }};background:rgba(245,245,245,.96);padding:8px 10px 8px 16px;border-radius:24px;box-shadow:0 6px 18px rgba(0,0,0,.12)">
+    <strong style="font-weight:800;font-size:14px;letter-spacing:.02em">{{ pageName }}</strong>
+    <span style="width:1px;height:16px;background:#c9c3bd"></span>
+    <span style="font-family:JetBrains Mono,monospace;font-size:11px;letter-spacing:.14em;color:#6b6460">{{ modeLabel }}</span>
+    <span style="width:1px;height:16px;background:#c9c3bd"></span>
+    <label style="display:flex;align-items:center;gap:6px;font-family:JetBrains Mono,monospace;font-size:11px;color:#6b6460">W
+      <input type="number" min="200" max="4000" value="{{ wVal }}" onChange="{{ onW }}" style="width:66px;height:28px;box-sizing:border-box;text-align:center;font-family:Outfit,sans-serif;font-weight:700;font-size:13px;border:1px solid #c9c3bd;border-radius:8px;background:#fff;color:#101010" />
+    </label>
+    <span style="color:#9a938e">×</span>
+    <label style="display:flex;align-items:center;gap:6px;font-family:JetBrains Mono,monospace;font-size:11px;color:#6b6460">H
+      <input type="number" min="200" max="4000" value="{{ hVal }}" onChange="{{ onH }}" style="width:66px;height:28px;box-sizing:border-box;text-align:center;font-family:Outfit,sans-serif;font-weight:700;font-size:13px;border:1px solid #c9c3bd;border-radius:8px;background:#fff;color:#101010" />
+    </label>
+    <button onClick="{{ rotate }}" title="Swap width and height" style="display:{{ rotateDisp }};height:28px;padding:0 10px;border:1px solid #c9c3bd;border-radius:8px;background:#fff;color:#101010;font-family:JetBrains Mono,monospace;font-size:11px;letter-spacing:.1em;cursor:pointer" style-hover="border-color:#101010">⟲ ROTATE</button>
+    <button onClick="{{ resetDims }}" title="Back to the default size" style="height:28px;padding:0 12px;border:1px solid {{ defBd }};border-radius:8px;background:{{ defBg }};color:{{ defFg }};font-family:Outfit,sans-serif;font-weight:800;font-size:11px;letter-spacing:.12em;cursor:pointer;transition:background .3s,color .3s,border-color .3s">DEFAULT</button>
+    <button onClick="{{ toggleFs }}" title="Full screen (F)" style="height:28px;padding:0 12px;border:none;border-radius:8px;background:#101010;color:#fff;font-family:Outfit,sans-serif;font-weight:800;font-size:11px;letter-spacing:.12em;cursor:pointer;transition:background .3s,color .3s" style-hover="background:#2a2a2a;color:#FFB600">FULL SCREEN</button>
+  </div>
+
+  <div style="position:absolute;top:50%;right:0;transform:translateY(-50%);z-index:6;display:{{ chromeDisp }};flex-direction:column;gap:10px">
+    <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="4">
+      <button onClick="{{ tb.go }}" style="width:40px;border:none;border-radius:12px 0 0 12px;background:{{ tb.bg }};color:{{ tb.fg }};writing-mode:vertical-rl;padding:16px 0;font-family:Outfit,sans-serif;font-weight:800;font-size:11px;letter-spacing:.24em;cursor:pointer;transition:background .3s,color .3s">{{ tb.label }}</button>
+    </sc-for>
+  </div>
+
+  <div style="position:absolute;top:0;right:40px;bottom:0;width:{{ panelW }};z-index:5;display:{{ panelDisp }};flex-direction:column;background:#f5f3f1;border-left:1px solid #c9c3bd;box-shadow:-10px 0 30px rgba(0,0,0,.08)">
+    <div style="padding:22px 20px 14px;display:flex;flex-direction:column;gap:4px;border-bottom:1px solid #ddd6d0">
+      <span style="font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.2em;color:#8a837e">PAGES</span>
+      <span style="font-weight:800;font-size:18px">Open a page</span>
+    </div>
+    <div style="flex:1;min-height:0;overflow-y:auto;padding:8px 10px">
+      <sc-for list="{{ pages }}" as="pg" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;background:{{ pg.bg }}">
+          <span style="flex:1;min-width:0;font-weight:700;font-size:14px;color:{{ pg.fg }}">{{ pg.name }}</span>
+          <sc-for list="{{ pg.modes }}" as="pm" hint-placeholder-count="3">
+            <button onClick="{{ pm.go }}" title="{{ pm.title }}" aria-label="{{ pm.title }}" style="width:30px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid {{ pm.bd }};border-radius:6px;background:{{ pm.bg }};cursor:pointer;padding:0">
+              <span style="display:flex;flex-direction:column;align-items:center;gap:1px"><span style="width:{{ pm.w }};height:{{ pm.h }};border:1.5px solid {{ pm.fg }};border-radius:{{ pm.r }};box-sizing:border-box"></span><span style="display:{{ pm.stand }};width:7px;height:1.5px;background:{{ pm.fg }}"></span></span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid #ddd6d0;font-family:JetBrains Mono,monospace;font-size:10px;line-height:1.7;letter-spacing:.08em;color:#8a837e">F · FULL SCREEN<br />1 / 2 / 3 · DESKTOP / TABLET / MOBILE</div>
+  </div>
+
+  <button onClick="{{ toggleFs }}" aria-label="Exit full screen" title="Exit full screen (Esc)" style="position:absolute;top:14px;right:14px;z-index:9;display:{{ exitDisp }};width:38px;height:38px;border-radius:50%;border:none;background:rgba(16,16,16,.45);color:#fff;font-size:18px;line-height:1;cursor:pointer;opacity:.55;transition:opacity .3s,background .3s" style-hover="opacity:1;background:rgba(16,16,16,.9)">×</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  DEF = { desktop: [1920, 910], tablet: [820, 1100], mobile: [393, 736] };
+  BEZ = { desktop: 0, tablet: 18, mobile: 12 };
+  RAD = { desktop: 8, tablet: 36, mobile: 40 };
+  IRAD = { desktop: 8, tablet: 20, mobile: 28 };
+  PAGES = [['Home', ''], ['Biotec project', '#project/biotec']];
+  SITE = 'index.html';
+  stageRef = React.createRef();
+  pillRef = React.createRef();
+
+  constructor(p) {
+    super(p);
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('portfolio-viewer') || '{}'); } catch (e) {}
+    this.state = { page: 0, mode: 'desktop', panel: false, dims: {}, fs: false, pillH: 44, win: [window.innerWidth, window.innerHeight], gen: 0, ...saved };
+    this.state.fs = false;
+  }
+  save() {
+    const { page, mode, panel, dims } = this.state;
+    try { localStorage.setItem('portfolio-viewer', JSON.stringify({ page, mode, panel, dims })); } catch (e) {}
+  }
+  set(p) { this.setState(p, () => this.save()); }
+  cur() { return this.state.dims[this.state.mode] || this.DEF[this.state.mode]; }
+
+  componentDidMount() {
+    this._onResize = () => this.setState({ win: [window.innerWidth, window.innerHeight], pillH: this.pillRef.current ? this.pillRef.current.offsetHeight : 44 });
+    window.addEventListener('resize', this._onResize);
+    this._onKey = (e) => {
+      if (/INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) return;
+      if (e.key === 'f' || e.key === 'F') { e.preventDefault(); this.toggleFs(); }
+      else if (e.key === 'Escape' && this.state.fs) this.exitFs();
+      else if (e.key === '1') this.set({ mode: 'desktop' });
+      else if (e.key === '2') this.set({ mode: 'tablet' });
+      else if (e.key === '3') this.set({ mode: 'mobile' });
+    };
+    window.addEventListener('keydown', this._onKey);
+    this._onFsc = () => { if (!document.fullscreenElement && this.state.fs) this.setState({ fs: false }); };
+    document.addEventListener('fullscreenchange', this._onFsc);
+    setTimeout(this._onResize, 50);
+  }
+  componentDidUpdate() {
+    const h = this.pillRef.current ? this.pillRef.current.offsetHeight : 0;
+    if (h && Math.abs(h - this.state.pillH) > 1) this.setState({ pillH: h });
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
+    window.removeEventListener('keydown', this._onKey);
+    document.removeEventListener('fullscreenchange', this._onFsc);
+  }
+  toggleFs() { if (this.state.fs) this.exitFs(); else this.enterFs(); }
+  enterFs() {
+    this.setState({ fs: true });
+    const el = this.stageRef.current;
+    if (el && el.requestFullscreen) el.requestFullscreen().catch(() => {});
+  }
+  exitFs() {
+    this.setState({ fs: false });
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+  }
+  setDim(i, v) {
+    const n = Math.round(Number(v));
+    if (!n) return;
+    const d = this.cur().slice(); d[i] = Math.max(200, Math.min(4000, n));
+    this.set({ dims: { ...this.state.dims, [this.state.mode]: d } });
+  }
+
+  renderVals() {
+    const { mode, page, panel, fs, pillH, win } = this.state;
+    const [W, H] = this.cur();
+    const b = this.BEZ[mode];
+    const panelW = 300, tabsW = 40;
+    const rightRes = tabsW + (panel ? panelW : 0);
+    const isDef = W === this.DEF[mode][0] && H === this.DEF[mode][1];
+    let sc, iw = W, ih = H, bz = b;
+    if (fs) {
+      bz = 0;
+      if (mode === 'desktop') { iw = win[0]; ih = win[1]; sc = 1; }
+      else { ih = win[1]; sc = Math.min(1, win[0] / W); }
+    } else {
+      const availW = win[0] - rightRes - 60, availH = win[1] - pillH - 64;
+      sc = Math.max(0.05, Math.min(availW / (W + 2 * b), availH / (H + 2 * b), 1));
+    }
+    const px = (n) => Math.round(n * 100) / 100 + 'px';
+    const pg = this.PAGES[page] || this.PAGES[0];
+    const icon = (m) => m === 'desktop' ? ['16px', '11px', '2px', 'block'] : m === 'tablet' ? ['11px', '14px', '2px', 'none'] : ['8px', '14px', '2px', 'none'];
+    return {
+      stageRef: this.stageRef, pillRef: this.pillRef,
+      stageBg: fs ? (mode === 'desktop' ? '#101010' : '#d9d3cd') : '#d9d3cd',
+      stageTop: fs ? '0px' : (pillH + 24) + 'px',
+      stageRight: fs ? '0px' : rightRes + 'px',
+      stageAlign: fs ? 'stretch' : 'center',
+      outerW: px((iw + 2 * bz) * sc), outerH: px((ih + 2 * bz) * sc),
+      outerR: fs ? '0px' : px(this.RAD[mode] * sc),
+      frameShadow: fs ? 'none' : '0 30px 80px rgba(0,0,0,.25)',
+      fsOutline: fs && mode !== 'desktop' ? '1px solid rgba(16,16,16,.25)' : 'none',
+      zoom: String(sc), bezelPad: bz + 'px', bezelBg: bz ? '#1c1714' : 'transparent', bezelR: fs ? '0px' : this.RAD[mode] + 'px',
+      innerW: iw + 'px', innerH: ih + 'px', innerR: fs ? '0px' : this.IRAD[mode] + 'px',
+      frameSrc: this.SITE + '?vw=1' + pg[1],
+      frameKey: 'f' + page + '-' + this.state.gen,
+      pageName: pg[0],
+      modeLabel: mode.toUpperCase(),
+      wVal: W, hVal: H,
+      onW: (e) => this.setDim(0, e.target.value), onH: (e) => this.setDim(1, e.target.value),
+      rotateDisp: mode === 'tablet' ? 'block' : 'none',
+      rotate: () => this.set({ dims: { ...this.state.dims, [mode]: [H, W] } }),
+      resetDims: () => { const d = { ...this.state.dims }; delete d[mode]; this.set({ dims: d }); },
+      defBg: isDef ? '#fff' : '#FFB600', defFg: '#101010', defBd: isDef ? '#c9c3bd' : '#FFB600',
+      toggleFs: () => this.toggleFs(),
+      chromeDisp: fs ? 'none' : 'flex',
+      exitDisp: fs ? 'block' : 'none',
+      pillMax: (win[0] - rightRes - 36) + 'px',
+      tabs: [['desktop', 'DESKTOP'], ['tablet', 'TABLET'], ['mobile', 'MOBILE'], ['pages', 'PAGES']].map(([k, label]) => {
+        const on = k === 'pages' ? panel : k === mode;
+        return { label, bg: on ? '#FFB600' : '#101010', fg: on ? '#101010' : '#fff', go: () => k === 'pages' ? this.set({ panel: !panel }) : this.set({ mode: k }) };
+      }),
+      panelW: panelW + 'px', panelDisp: panel && !fs ? 'flex' : 'none',
+      pages: this.PAGES.map(([name], i) => ({
+        name, bg: i === page ? '#fff' : 'transparent', fg: '#101010',
+        modes: ['desktop', 'tablet', 'mobile'].map((m) => {
+          const [w, h, r, stand] = icon(m), on = i === page && m === mode;
+          return { title: name + ' · ' + m, w, h, r, stand, bg: on ? '#FFB600' : '#fff', bd: on ? '#FFB600' : '#c9c3bd', fg: '#101010', go: () => this.set({ page: i, mode: m, gen: this.state.gen + 1 }) };
+        })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
